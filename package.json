@@ -1,0 +1,14 @@
+{
+  "name": "nodejsmodelviewcontrolerpatern",
+  "version": "1.0.0",
+  "description": "Learning Model View Controler patern",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon app.js"
+  },
+  "author": "Vlad",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
