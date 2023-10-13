@@ -1,0 +1,38 @@
+<%- include('./includes/start.ejs') %>
+    <link rel="stylesheet" href="/css/product.css" />
+  </head>
+
+  <body>
+    <%- include('./includes/header.ejs') %>
+    <main>
+      <% if (prods.length > 0) { %>
+      <div class="grid">
+        <% prods.forEach(prod => {%>
+        <article class="card product-item">
+          <header class="card__header">
+            <h1 class="product__title"><%= prod.title %></h1>
+          </header>
+          <div class="card__image">
+            <img
+              src="https://media.cnn.com/api/v1/images/stellar/prod/191003121459-02-bugatti-chiron-road-trip.jpg?q=x_35,y_626,h_1946,w_3459,c_crop/h_720,w_1280"
+              alt="A Book"
+            />
+          </div>
+          <div class="card__content">
+            <h2 class="product__price">$19.99</h2>
+            <p class="product__description">
+              A very interesting book about so many even more interesting
+              things!
+            </p>
+          </div>
+          <div class="card__actions">
+            <button class="btn">Add to Cart</button>
+          </div>
+        </article>
+        <% }) %>
+      </div>
+      <% } else { %> 
+        <h1>No added products yet :(</h1>
+        <%} %>
+    </main>
+<%- include('./includes/end.ejs') %>
