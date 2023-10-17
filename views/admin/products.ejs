@@ -1,9 +1,9 @@
-<%- include('./includes/start.ejs') %>
+<%- include('../includes/start.ejs') %>
     <link rel="stylesheet" href="/css/product.css" />
   </head>
 
   <body>
-    <%- include('./includes/header.ejs') %>
+    <%- include('../includes/header.ejs') %>
     <main>
       <% if (prods.length > 0) { %>
       <div class="grid">
@@ -14,19 +14,21 @@
           </header>
           <div class="card__image">
             <img
-              src="https://media.cnn.com/api/v1/images/stellar/prod/191003121459-02-bugatti-chiron-road-trip.jpg?q=x_35,y_626,h_1946,w_3459,c_crop/h_720,w_1280"
-              alt="A Book"
+              src="<%= prod.imageUrl%>"
+              alt="<%= prod.imageUrl%>"
             />
           </div>
           <div class="card__content">
-            <h2 class="product__price">$19.99</h2>
+            <h2 class="product__price">$<%= prod.price%></h2>
             <p class="product__description">
-              A very interesting book about so many even more interesting
-              things!
+              <%= prod.description %>
             </p>
           </div>
           <div class="card__actions">
-            <button class="btn">Add to Cart</button>
+              <a href="/admin/edit-product" class="btn">Edit</a>
+            <form method="POST" action="/admin/delete-product" > 
+                <button class="btn">Delete</button>
+            </form>
           </div>
         </article>
         <% }) %>
@@ -35,4 +37,4 @@
         <h1>No added products yet :(</h1>
         <%} %>
     </main>
-<%- include('./includes/end.ejs') %>
+<%- include('../includes/end.ejs') %>
