@@ -1,7 +1,43 @@
 <%- include('../includes/start.ejs') %>
-</head>
-<%- include('../includes/header.ejs') %>
-<body>
-<h1>Cart</h1>
-<a href="/checkout">Checkout</a>
-<%- include('../includes/end.ejs')%>
+    <link rel="stylesheet" href="/css/product.css" />
+  </head>
+
+  <body>
+    <%- include('../includes/header.ejs') %>
+    <main>
+        <div>
+            <h1><%=totalPrice%></h1>
+        </div>
+      <% if (prods.length > 0) { %>
+      <div class="grid">
+        <% prods.forEach(prod => {%>
+        <article class="card product-item">
+          <header class="card__header">
+            <h1 class="product__title"><%= prod.title %></h1>
+          </header>
+          <div class="card__image">
+            <img
+              src="<%=prod.imageUrl%>"
+              alt="<%=prod.imageUrl%>"
+            />
+          </div>
+          <div class="card__content">
+            <h2 class="product__price">$<%= prod.price%></h2>
+            <p class="product__description">
+              <%= prod.quantity %> items added to cart
+            </p>
+          </div>
+          <div class="card__actions">
+            <form action="/cart/delete-item/<%=prod.id%>" method="POST">
+              <button class="btn" type="submit">Delete</button>
+            </form>
+            <%- include('../includes/add-to-cart.ejs', {prod: prod}) %>
+          </div>
+        </article>
+        <% }) %>
+      </div>
+      <% } else { %> 
+        <h1>No added products yet :(</h1>
+        <%} %>
+    </main>
+<%- include('../includes/end.ejs') %>

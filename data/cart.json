@@ -1,1 +1,1 @@
-{"products":[{"id":"3129214123","quantity":3},{"id":"0.5665693049546998","quantity":7}],"totalPrice":3700}
+{"products":[{"id":"0.5204569669200501","quantity":1,"price":1000,"title":"My car","imageUrl":"https://media.cnn.com/api/v1/images/stellar/prod/191003121459-02-bugatti-chiron-road-trip.jpg?q=x_35,y_626,h_1946,w_3459,c_crop/h_720,w_1280"},{"id":"0.40272244794351475","quantity":1,"price":500,"title":"Julia's car","imageUrl":"https://www.motortrend.com/uploads/sites/5/2009/03/17976321.jpeg.jpg"}],"totalPrice":1500}

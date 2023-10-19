@@ -1,5 +1,5 @@
 const Product = require('../models/product');
-const Cart = require('../models/cart')
+const Cart = require('../models/cart');
 
 exports.getProducts = (req, res, next) => {
   Product.fetchAll((prodsArr) => {
@@ -33,9 +33,13 @@ exports.showAllProducts = (req, res, next) => {
 };
 
 exports.getCart = (req, res, next) => {
-  res.render('./shop/cart.ejs', {
-    title: 'Cart BOSJ ejs',
-    path: '/cart',
+  Cart.getCart((cart) => {
+    res.render('./shop/cart.ejs', {
+      title: 'Cart BOSJ ejs',
+      path: '/cart',
+      prods: cart.products,
+      totalPrice: cart.totalPrice,
+    });
   });
 };
 
@@ -43,9 +47,23 @@ exports.postCart = (req, res, next) => {
   const productIdToAddToCart = req.body.productId;
   const productQuantityToAddToCart = req.body.quantity;
   Product.findById(productIdToAddToCart, (prod) => {
-    Cart.addProduct(productIdToAddToCart,productQuantityToAddToCart, prod.price)
+    Cart.addProduct(
+      productIdToAddToCart,
+      productQuantityToAddToCart,
+      prod.price,
+      prod.title,
+      prod.imageUrl,
+      () => {
+        res.redirect('/cart');
+      }
+    );
   });
-  res.redirect('/cart');
+};
+
+exports.postDeleteCartItem = (req, res, next) => {
+  Cart.deleteProduct(req.params.itemID, () => {
+    res.redirect('/cart');
+  });
 };
 
 exports.getCheckout = (req, res, next) => {

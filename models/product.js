@@ -17,20 +17,44 @@ function getAllProducts(cb) {
 }
 
 module.exports = class Product {
-  constructor(title, imageUrl, description, price) {
+  constructor(id, title, imageUrl, description, price) {
+    this.id = id;
     this.title = title;
     this.imageUrl = imageUrl;
     this.description = description;
     this.price = price;
   }
-  save() {
-    this.id = Math.random().toString();
-    getAllProducts((prods) => {
-      prods.push(this);
-      fs.writeFile(saveProdPath, JSON.stringify(prods), (err) => {
+  save(cb) {
+    if (!this.id) {
+      this.id = Math.random().toString();
+      getAllProducts((prods) => {
+        prods.push(this);
+        fs.writeFile(saveProdPath, JSON.stringify(prods), (err) => {
+          console.log(err);
+        });
+      });
+    } else {
+      getAllProducts((prods) => {
+        const updatedProdIndex = prods.findIndex((prod) => prod.id === this.id);
+        const prodsAfterUpdate = [...prods];
+        prodsAfterUpdate[updatedProdIndex] = this;
+        fs.writeFile(saveProdPath, JSON.stringify(prodsAfterUpdate), (err) => {
+          console.log(err);
+        });
+      });
+    }
+    return cb();
+  }
+  static deleteByID(idToDelete, cb) {
+    this.fetchAll((arrAllProds) => {
+      const newProdsArray = [...arrAllProds].filter(
+        (prod) => prod.id !== idToDelete
+      );
+      fs.writeFile(saveProdPath, JSON.stringify(newProdsArray), (err) => {
         console.log(err);
       });
     });
+    return cb()
   }
   static fetchAll(cb) {
     getAllProducts(cb);
