@@ -5,9 +5,13 @@
   <body>
     <%- include('../includes/header.ejs') %>
     <main>
-        <div>
-            <h1><%=totalPrice%></h1>
+        <div class="aboveCart">
+            <h1>$<%=totalPrice%> total for all items</h1>
+            <form action="/create-order" method="POST">
+              <button type="submit" class="btn">Checkout</button>
+            </form>
         </div>
+        <hr>
       <% if (prods.length > 0) { %>
       <div class="grid">
         <% prods.forEach(prod => {%>
@@ -24,7 +28,7 @@
           <div class="card__content">
             <h2 class="product__price">$<%= prod.price%></h2>
             <p class="product__description">
-              <%= prod.quantity %> items added to cart
+              <%= prod.cartItem.quantity %> items added to cart
             </p>
           </div>
           <div class="card__actions">

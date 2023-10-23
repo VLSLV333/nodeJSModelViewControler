@@ -1,4 +1,4 @@
-const Product = require('../models/product');
+const Product = require('../models/productSequelize');
 const Cart = require('../models/cart');
 
 exports.getAddProduct = (req, res, next) => {
@@ -11,25 +11,36 @@ exports.getAddProduct = (req, res, next) => {
 };
 
 exports.postAddProduct = (req, res, next) => {
-  new Product(
-    null,
-    req.body.title,
-    req.body.imageUrl,
-    req.body.description,
-    req.body.price
-  ).save(() => {
-    res.redirect('/admin/products');
-  });
+  req.user
+    .createProduct({
+      // createProduct is automatically generated method by sequelize, because we have one-to-many relation
+      title: req.body.title, //   created in app.js
+      price: req.body.price,
+      imageUrl: req.body.imageUrl,
+      description: req.body.description,
+    })
+    // Product.create({
+    //   title: req.body.title,
+    //   price: req.body.price,
+    //   imageUrl: req.body.imageUrl,
+    //   description: req.body.description,
+    //   userId: req.user.id,
+    // })
+    .then((result) => res.redirect('/admin/products'))
+    .catch((err) => console.log(err));
 };
 
 exports.getAdminProducts = (req, res, next) => {
-  Product.fetchAll((prodsArr) => {
-    res.render('./admin/products.ejs', {
-      prods: prodsArr,
-      title: 'Admin Products BOSH',
-      path: '/admin/products',
-    });
-  });
+  req.user
+    .getProducts()
+    .then((arrWithProdData) => {
+      res.render('./admin/products.ejs', {
+        prods: arrWithProdData,
+        title: 'Admin Products BOSH',
+        path: '/admin/products',
+      });
+    })
+    .catch((err) => console.log(err));
 };
 
 exports.getEditProduct = (req, res, next) => {
@@ -37,35 +48,42 @@ exports.getEditProduct = (req, res, next) => {
   if (!editMode) {
     return res.redirect('/');
   }
-  Product.findById(req.params.productID, (prod) => {
-    if (!prod) {
-      return res.redirect('/');
-    }
-    res.render('./admin/edit-product', {
-      title: 'Edit Product BOSH',
-      path: '/admin/edit-product',
-      editing: editMode,
-      prod: prod,
-    });
-  });
+  // Product.findByPk(req.params.productID)
+  req.user
+    .getProducts({ where: { id: req.params.productID } })
+    .then(([prod]) => {
+      if (!prod) {
+        return res.redirect('/');
+      }
+      res.render('./admin/edit-product', {
+        title: 'Edit Product BOSH',
+        path: '/admin/edit-product',
+        editing: editMode,
+        prod: prod,
+      });
+    })
+    .catch((err) => console.log(err));
 };
 
 exports.postEditProduct = (req, res, next) => {
-  new Product(
-    req.query.idToUpdate,
-    req.body.title,
-    req.body.imageUrl,
-    req.body.description,
-    req.body.price
-  ).save(() => {
-    res.redirect('/admin/products');
-  });
+  Product.findByPk(req.query.idToUpdate)
+    .then((prod) => {
+      prod.title = req.body.title;
+      prod.price = req.body.price;
+      prod.imageUrl = req.body.imageUrl;
+      prod.description = req.body.description;
+      return prod.save();
+    })
+    .then(() => res.redirect('/admin/products'))
+    .catch((err) => console.log(err));
 };
 
 exports.postDeleteProduct = (req, res, next) => {
-  Product.deleteByID(req.body.idToDelete, () => {
-    Cart.deleteProduct(req.body.idToDelete, () => {
-      res.redirect('/admin/products');
-    });
-  });
+  // add deletion in cart aswell after deleting in admim
+  Product.findByPk(req.body.idToDelete)
+    .then((prod) => {
+      return prod.destroy();
+    })
+    .then(() => res.redirect('/admin/products'))
+    .catch((err) => console.log(err));
 };
